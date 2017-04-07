@@ -191,3 +191,29 @@
 .max-width-300 {
   max-width: 300px;
 }
+
+.min-width-114 {
+  min-width: 114px;
+}
+
+.checkbox-list {
+  float: none;
+}
+
+.checkbox-list .input-group {
+  float: left;
+  margin-top: 0px;
+  margin-left: 5px;
+}
+
+.checkbox-list > div.input-group:first-child {
+ margin-left: 0px;
+}
+
+.min-height-67 {
+  min-height: 67px;
+}
+
+#logs-table_length {
+  display: none;
+}

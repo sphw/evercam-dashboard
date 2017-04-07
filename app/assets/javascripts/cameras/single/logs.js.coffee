@@ -129,8 +129,8 @@ initializeDataTable = ->
     ],
     autoWidth: false,
     info: false,
-    bPaginate: false,
-    bFilter: false,
+    bPaginate: true,
+    pageLength: 50
     "language": {
       "emptyTable": "No data available"
     },
@@ -264,8 +264,8 @@ getDate = (type) ->
     DateFromTime.setMinutes(0)
   if type is "to"
     DateFromTime.setHours(DateFromTime.getHours() + 2)
-  Dateformateed =  format_time.formatDate(DateFromTime, 'd/m/y H:i')
-  return Dateformateed
+  Dateformated =  format_time.formatDate(DateFromTime, 'd/m/y H:i')
+  return Dateformated
 
 onImageHover = ->
   $("#logs-table").on "mouseover", ".thumbs", ->
