@@ -12,7 +12,7 @@
         <span></span>
       </div>
       <div id="registration" class="center-div width-400 col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-        <div class="branding margin-bottom15">
+        <div class="branding">
           <%= link_to root_path, class: 'sign-in-logo' do %>
             <%= image_tag("evercam_logo.png", :class => "svg-logo", alt: "Evercam.io") %>
           <% end %>
@@ -43,7 +43,7 @@
 
             <div class="text-center">
               <div class="col-sm-12 no-padding form-group<%= field_errors.include?("username") ? " has-error" : "" %>">
-                <%= f.text_field :username, value: params.fetch('user', {})[:username], class: "form-control", "required" => "" , "data-validation" => "custom", "data-validation-regexp" => '^[a-z]+[\w\u00C0-\u00ff-]+$', "data-validation-error-msg" => "Username can consist of lower case letters then numbers, dashes & underscores" , "maxlength" => "40" %>
+                <%= f.text_field :username, value: params.fetch('user', {})[:username], class: "form-control", "required" => "" , "data-validation" => "custom", "data-validation-regexp" => '^[a-zA-Z0-9]+[\w\u00C0-\u00ff-]+$', "data-validation-error-msg" => "Username can consist of letters then numbers, dashes & underscores" , "maxlength" => "40" %>
                 <% if field_errors.include?("username") %>
                   <span class="help-block arrow_box form-error text-left"><%= field_errors["username"] %></span>
                 <% end %>

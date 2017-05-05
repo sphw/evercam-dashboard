@@ -107,7 +107,6 @@ class CamerasController < ApplicationController
       )
       redirect_to cameras_single_path(new_camera["id"])
     rescue => error
-      env["airbrake.error_id"] = notify_airbrake(error)
       flash[:user] = {
         'camera-name' => params['camera-name'],
         'camera-username' => params['camera-username'],
@@ -164,7 +163,6 @@ class CamerasController < ApplicationController
       camera = get_evercam_api.get_camera(params["id"], false)
       result = {success: true, camera: camera}
     rescue => error
-      env["airbrake.error_id"] = notify_airbrake(error)
       Rails.logger.error "Exception caught updating camera details.\nCause: #{error}\n" +
           error.backtrace.join("\n")
       result = {success: false, message: error.message}
@@ -186,7 +184,6 @@ class CamerasController < ApplicationController
         end
       end
     rescue => error
-      env["airbrake.error_id"] = notify_airbrake(error)
       Rails.logger.error "Exception caught deleting camera.\nCause: #{error}\n" +
           error.backtrace.join("\n")
       message = "An error occurred deleting your camera. Please try again "\
@@ -199,7 +196,17 @@ class CamerasController < ApplicationController
   def single
     begin
       api = get_evercam_api
-      @camera = api.get_camera(params[:id], true)
+      @cameras = load_user_cameras(true, false)
+      @has_shared = false
+      @cameras.map do |c|
+        if c['id'].eql?(params[:id])
+          @camera = c
+          @has_shared = true if @camera['owner'] != current_user.username
+          break
+        end
+      end
+      @camera = api.get_camera(params[:id], true) if @camera.nil?
+      @is_owner = @camera['owner'] == current_user[:username]? true : false
       @page = (params[:page].to_i - 1) || 0
       @types = ['accessed', 'viewed', 'edited', 'captured',
         'shared', 'stopped sharing', 'online', 'offline',
@@ -214,17 +221,16 @@ class CamerasController < ApplicationController
       current = time_zone.current_period
       @offset = current.utc_offset + current.std_offset
       @share = nil
-      if @camera['owner'] != current_user.username
-        @share = api.get_camera_share(params[:id], current_user.username)
-        return redirect_to cameras_not_found_path if @share.nil? && !@camera['is_public']
+      @owner = nil
+      unless @is_owner
+        return redirect_to cameras_not_found_path if !@has_shared && !@camera['is_public']
         @owner = User.by_login(@camera['owner'])
       else
         @owner = current_user
       end
       @has_edit_rights = @camera["rights"].split(",").include?("edit") if @camera["rights"]
-      @camera_shares = api.get_camera_shares(params[:id])
-      @share_requests = api.get_camera_share_requests(params[:id], 'PENDING')
-      @vendor_model = api.get_model(@camera['model_id']) if @camera['model_id'].present?
+      @camera_shares = nil
+      @share_requests = nil
       @cloud_recording = @camera["cloud_recordings"] if @has_edit_rights
       @cr_status = nil
       if @cloud_recording.nil?
@@ -244,7 +250,7 @@ class CamerasController < ApplicationController
           }
         }
       end
-      @motion_detection = api.get_motion_detections(params[:id]) if @has_edit_rights
+      @motion_detection = nil
       if @motion_detection.nil?
         @motion_detection_method = "POST"
         @motion_detection = {
@@ -260,13 +266,11 @@ class CamerasController < ApplicationController
           "emails" => []
         }
       end
-      @cameras = load_user_cameras(true, false)
       @snapshot_navigator = false
     rescue => error
       if error.try(:status_code).present? && error.status_code.equal?(404)
         redirect_to cameras_not_found_path
       else
-        env["airbrake.error_id"] = notify_airbrake(error)
         Rails.logger.error "Exception caught fetching camera details.\nCause: #{error}\n" +
                              error.backtrace.join("\n")
         flash[:error] = "An error occurred fetching the details for your camera. "\
@@ -295,6 +299,10 @@ class CamerasController < ApplicationController
   end
 
   def online_offline
+    @cameras = load_user_cameras(true, false)
+  end
+
+  def update_status_report
     days = if params[:history_days].to_i != 0 then params[:history_days].to_i else 7 end
     @cameras = load_user_cameras(true, false)
     camera_exids = []
@@ -328,6 +336,7 @@ class CamerasController < ApplicationController
         data: format_logs(camera_log[:status], camera_log[:logs], "Etc/UTC", camera_log[:created_at], days)
       }
     end
+    render json: @formated_data.to_json.html_safe
   end
 
   def create_measure(camera_name, status)
@@ -415,7 +424,6 @@ class CamerasController < ApplicationController
       raise BadRequestError.new("No user email specified in request.") unless params.include?(:email)
       get_evercam_api.change_camera_owner(params[:camera_id], params[:email])
     rescue => error
-      env["airbrake.error_id"] = notify_airbrake(error)
       Rails.logger.error "Exception caught transferring camera ownership.\nCause: #{error}\n" +
           error.backtrace.join("\n")
       message = "An error occurred transferring ownership of this camera. Please "\

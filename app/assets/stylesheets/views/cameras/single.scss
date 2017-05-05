@@ -8,11 +8,16 @@
 @import "single/_streams.scss";
 @import "single/_archives.scss";
 @import "single/single-snapmail.scss";
+@import "single/timelapse.scss";
 
 .center-tabs .icon-bar-alignment {
   font-size: 16px;
   margin-top: 0px;
   margin-right: -5px;
+}
+
+.play-options .font-size-16 {
+  font-size: 16px;
 }
 
 #ul-nav-tab .caret{

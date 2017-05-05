@@ -225,13 +225,16 @@ handleSlider = ->
   $("#divSlider").click(onSliderClick)
 
 showLoader = ->
-  if $("#imgPlayback").attr("src").indexOf('nosnapshots') != -1
-    $("#imgPlayback").attr("src","/assets/plain.png")
-  $("#imgLoaderRec").width($('#imgPlayback').width())
-  $("#imgLoaderRec").height($('#imgPlayback').height())
-  $("#imgLoaderRec").css("top", $('#imgPlayback').css('top'))
-  $("#imgLoaderRec").css("left", $('#imgPlayback').css('left'))
-  $("#imgLoaderRec").show()
+  if $('#recording-tab').width() is 0
+    $("#imgLoaderRec").hide()
+  else
+    if $("#imgPlayback").attr("src").indexOf('nosnapshots') != -1
+      $("#imgPlayback").attr("src","/assets/plain.png")
+    $("#imgLoaderRec").width($('.left-column').width())
+    $("#imgLoaderRec").height($('#imgPlayback').height())
+    $("#imgLoaderRec").css("top", $('#imgPlayback').css('top'))
+    $("#imgLoaderRec").css("left", $('#imgPlayback').css('left'))
+    $("#imgLoaderRec").show()
 
 SetInfoMessage = (currFrame, date_time) ->
   $("#divInfo").fadeIn()
@@ -383,15 +386,17 @@ BoldSnapshotHourSuccess = (result, context) ->
   hasRecords = false
   currentDate = new Date($("#camera_selected_time").val())
   AssignedDate = $("#ui_date_picker_inline").datepicker('getDate')
+  selected_hour = parseInt(AssignedDate.getHours())
   for hour in result.hours
-    #hr = hour + CameraOffset
     $("#tdI#{hour}").addClass('has-snapshot')
     if currentDate.getDate() isnt AssignedDate.getDate() ||
     currentDate.getMonth() isnt AssignedDate.getMonth()
       hasRecords = true
     else
-      cameraCurrentHour = hour
       hasRecords = true
+      if selected_hour is 0
+        cameraCurrentHour = hour
+
 
   if hasRecords
     if this.isCall

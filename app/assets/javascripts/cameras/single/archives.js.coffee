@@ -110,7 +110,8 @@ renderbuttons = (row, type, set, meta) ->
     div.append(divPopup)
   if row.status is "Completed"
     DateTime = new Date(moment.utc(row.created_at*1000).format('MM/DD/YYYY, HH:mm:ss'))
-    mp4_url = "#{Evercam.API_URL}cameras/#{row.camera_id}/archives/#{row.id}/play?api_id=#{Evercam.User.api_id}&api_key=#{Evercam.User.api_key}"
+    # mp4_url = "#{Evercam.API_URL}cameras/#{row.camera_id}/archives/#{row.id}/play?api_id=#{Evercam.User.api_id}&api_key=#{Evercam.User.api_key}"
+    mp4_url = "#{Evercam.SEAWEEDFS_URL}#{row.camera_id}/clips/#{row.id}.mp4"
     day = DateTime.getDate()
     month = DateTime.getMonth()
     year = DateTime.getFullYear()
@@ -270,8 +271,6 @@ createClip = ->
       title: $("#clip-name").val()
       from_date: from_date
       to_date: to_date
-      embed_time: $("#embed-datetime").is(":checked")
-      is_public: $("#is-public").is(":checked")
 
     onError = (jqXHR, status, error) ->
       isUnauthorized(jqXHR)
@@ -312,7 +311,7 @@ setToDate = (date, duration) ->
   time_arr = time.split(":")
   new_date = new Date(
     date_arr[2],date_arr[1] - 1,date_arr[0],
-    time_arr[0],time_arr[1],time_arr[2]
+    time_arr[0],time_arr[1]
   )
   min = $('#archive-time').data('timepicker').minute
   new_date.setMinutes(parseInt(min) + parseInt(duration))
@@ -329,10 +328,6 @@ setDate = ->
 formReset = ->
   $("#clip-name").val("")
   $('#archive-modal').modal('hide')
-  $("#embed-datetime").prop("checked", false)
-  $("#lbl-embed-datetime span").removeClass("checked")
-  $("#is-public").prop("checked", false)
-  $("#lbl-is-public span").removeClass("checked")
 
 playClip = ->
   $("#archives-table").on "click", ".play-clip", ->

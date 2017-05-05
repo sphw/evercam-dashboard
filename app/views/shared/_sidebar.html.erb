@@ -5,7 +5,7 @@
         <div class="sidebar-title">
           <div id="hello" class="col-md-12">
             <%= link_to cameras_index_path do %>
-              <img src="/favicon-16x16.png" class="camera-icon"><span class="title"> Cameras</span>
+              <img src="/favicon-white-24x24.png" class="camera-icon"><span class="title"> Cameras</span>
             <% end %>
             <span class="camera-fadrop">
               <i class="fa fa-caret-down pull-right title"></i>
@@ -42,7 +42,7 @@
       </li>
       <li>
         <%= link_to "http://timelapse.evercam.io/login.html?id=#{current_user.username}&api_id=#{current_user.api_id}&api_key=#{current_user.api_key}", target: "_blank" do %>
-            <i class="fa fa-history icon-font"></i><span class="title"> Timelapse</span>
+          <i class="fa fa-history icon-font"></i><span class="title"> Timelapse</span>
         <% end %>
       </li>
       <li class="sidebar-line nprogCall">
@@ -89,36 +89,9 @@
             <% end %>
           </li>
           <li class="status-list">
-            <a class="status-report"><i class="fa fa-barcode icon-font width-20"></i> Status Report <i class="fa fa-caret-down pull-right right-margin"></i>
-            <i class="fa fa-caret-up pull-right right-margin"></i></a>
-          </li>
-          <ul class="status-report-submenu left-nav-submenu">
-            <li>
-              <%= link_to status_path(:history_days => 1) do %>
-                <i class="fa fa-barcode"></i> 1 Day
-              <% end %>
-            </li>
-            <li>
-              <%= link_to status_path(:history_days => 3) do %>
-                <i class="fa fa-barcode"></i> 3 Days
-              <% end %>
-            </li>
-            <li>
-              <%= link_to status_path(:history_days => 7) do %>
-                <i class="fa fa-barcode"></i> 7 Days
-              <% end %>
-            </li>
-            <li>
-              <%= link_to status_path(:history_days => 30) do %>
-                <i class="fa fa-barcode"></i> 30 Days
-              <% end %>
-            </li>
-            <li>
-              <%= link_to status_path(:history_days => 90) do %>
-                <i class="fa fa-barcode"></i> 90 Days
-              <% end %>
-            </li>
-          </ul>
+            <%= link_to status_path do %>
+              <i class="fa fa-barcode width-20"></i> Status Report
+            <% end %>
           </li>
         </ul>
       </li>

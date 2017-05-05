@@ -10,6 +10,7 @@
 #= require cameras/single/testsnapshot.js.coffee
 #= require cameras/single/archives.js.coffee
 #= require cameras/single/single_snapmail.js.coffee
+#= require cameras/single/timelapse.js.coffee
 #= require saveimage.js
 #= require jquery.thumbhover.js
 
@@ -169,7 +170,7 @@ handleResize = ->
 initTimepicker = ->
   $('.timepicker-default').timepicker
     minuteStep: 1
-    showSeconds: true
+    showSeconds: false
     showMeridian: false
     $('.timepicker-default').val(getPastOneHour())
 

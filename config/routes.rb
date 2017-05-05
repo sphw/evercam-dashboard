@@ -38,6 +38,7 @@ Rails.application.routes.draw do
   post '/v1/cameras/new' => 'cameras#create'
   get '/cameras/transfer' => 'cameras#transfer'
   get '/status' => 'cameras#online_offline'
+  get '/status_report' => 'cameras#update_status_report'
   get '/map' => 'cameras#map', as: :map_view
   get '/cameras_table' => 'cameras#cameras_table'
   get '/v1/cameras/:id' => 'cameras#single', as: :cameras_single
@@ -57,6 +58,8 @@ Rails.application.routes.draw do
   get '/v1/snapmails' => 'snapmails#index', as: :snapmails_index
   get '/v1/snapmails/:id/unsubscribe' => 'pages#unsubscribe'
   post '/v1/snapmails/:id/unsubscribe' => 'pages#unsubscribed', as: :unsubscribed_snapmail
+
+  get '/timelapses' => 'timelapses#index', as: :timelapses_index
 
   get '/v1/public/cameras' => redirect('https://evercam.io/public/cameras/')
   get '/v1/public/cameras/:id' => redirect('https://evercam.io/public/cameras/')
@@ -100,6 +103,9 @@ Rails.application.routes.draw do
     get '/cameras/add' => 'widget_cameras_add#widget_add_camera', as: :widget_camera_add
     get '/cameras/public/add' => 'widget_cameras_add#add_public_camera'
     get '/add.camera' => 'widget_cameras_add#add_camera'
+
+    resources :widget_timelapse, path: :widget_timelapse
+    get '/timelapse-widget' => 'widget_timelapse#timelapse_js'
   end
 
   get '/live/:id' => 'pages#live'
