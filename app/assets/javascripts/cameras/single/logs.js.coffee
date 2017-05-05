@@ -20,6 +20,7 @@ updateLogTypesFilter = () ->
   $.each($("input[name='type']:checked"), ->
     types.push($(this).val())
   )
+  console.log types
   from_date = moment($('#datetimepicker').val(), "DD-MM-YYYY H:mm")
   to_date = moment($('#datetimepicker2').val(), "DD-MM-YYYY H:mm")
   from = from_date._d.getTime()/ 1000
