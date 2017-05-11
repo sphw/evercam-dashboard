@@ -211,12 +211,28 @@
         }
 
         function patchSize() {
-            var imgRef = backElement.find('img').first();
-            setSize(imgRef.width(), imgRef.height(), imgRef.naturalWidth(), imgRef.naturalHeight());
-            element.css('max-width', size.maxWidth + 'px');
-            element.css('max-height', size.maxHeight + 'px');
-            frontElement.width(size.width);
-            frontElement.height(size.height);
+            if ($("#image-compare").hasClass("embed")) {
+              var imgRef = backElement.find('img').first();
+              setSize(content_width, content_height, content_width, content_height);
+              setSize(imgRef.width(), imgRef.height(), imgRef.naturalWidth(), imgRef.naturalHeight());
+              element.css('max-width', size.maxWidth + 'px');
+              element.css('max-height', size.maxHeight + 'px');
+              frontElement.width(size.width);
+              frontElement.height(size.height);
+            } else {
+              var content_width = Metronic.getViewPort().width;
+              var content_height = Metronic.getViewPort().height;
+              content_height = content_height - $('.center-tabs').height();
+              var side_bar_width = $(".page-sidebar").width();
+              content_width = content_width - side_bar_width - 10;
+              setSize(content_width, content_height, content_width, content_height);
+              element.css('min-width', size.maxWidth + 'px');
+              element.css('min-height', size.maxHeight + 'px');
+              frontElement.width(size.width);
+              frontElement.height(size.height);
+              backElement.width(size.width);
+              backElement.height(size.height);
+            }
         }
 
         /**

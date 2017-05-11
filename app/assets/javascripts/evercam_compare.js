@@ -20,7 +20,7 @@ var $;
       before = query[1];
       after = query[2];
 
-      var html = '<div class="js-img-compare">';
+      var html = '<div id="image-compare" class="js-img-compare embed">';
       html += '     <div style="display: none;">';
       html += '       <span id="calendar-before" class="images-compare-label"><i class="fa fa-calendar compare-calendar"></i> Before</span>';
       html += '       <img id="compare_before" src="" alt="Before"/>';
@@ -28,6 +28,9 @@ var $;
       html += '     <div>';
       html += '       <span id="calendar-after" class="images-compare-label"><i class="fa fa-calendar compare-calendar"></i> After</span>';
       html += '       <img id="compare_after" src="" alt="After"/>';
+      html += '     </div>';
+      html += '     <div class="evercam-brand">';
+      html += '       <img src="' + window.location.origin + '/assets/evercam-logo-white.png" class="svg-logo" alt="Evercam.io" />';
       html += '     </div>';
       html += '   </div>';
 
@@ -89,12 +92,12 @@ var $;
   function addVideojsReffrences() {
     var videojs_tag = document.createElement('script');
     videojs_tag.setAttribute("type","text/javascript");
-    videojs_tag.setAttribute("src", "http://localhost:3000/assets/hammer.min.js");
+    videojs_tag.setAttribute("src", window.location.origin + "/assets/hammer.min.js");
     (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(videojs_tag);
 
     var videojs_hls_tag = document.createElement('script');
     videojs_hls_tag.setAttribute("type","text/javascript");
-    videojs_hls_tag.setAttribute("src", "http://localhost:3000/assets/jquery.images-compare.js");
+    videojs_hls_tag.setAttribute("src", window.location.origin + "/assets/jquery.images-compare.js");
     (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(videojs_hls_tag);
 
     var style = "<style>";
@@ -105,6 +108,7 @@ var $;
     style += ".images-compare-left-arrow { border-right: 6px solid white;left: 50%;margin-left: -17px; } .images-compare-right-arrow { border-left: 6px solid white;right: 50%;margin-right: -17px; }";
     style += ".images-compare-label { font-family: sans-serif;text-transform: uppercase;font-weight: bold;position: absolute;top: 10px;left: 10px;z-index: 1;color: rgb(0, 0, 0);color: rgba(0, 0, 0, 0.4);background: rgb(255, 255, 255);background: rgba(255, 255, 255, 0.7);padding: 10px;border-radius: 5px;pointer-events: auto;cursor: pointer;display: none; }";
     style += ".images-compare-container .images-compare-label { display: inherit; } .images-compare-before .images-compare-label { left: 10px; } .images-compare-after .images-compare-label { left: auto;right: 10px; }";
+    style += ".evercam-brand { bottom: 5px;display: table;height: 14px;line-height: 14px;padding: 1px 4px 1px 5px;position: absolute;text-decoration: none;z-index: 10; } .evercam-brand img.svg-logo { height: auto; width: 140px; }"
     style += "</style>";
     jQuery('head').append(style);
   }

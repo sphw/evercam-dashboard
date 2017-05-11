@@ -31,7 +31,7 @@ initCompare = ->
     else
       imagesCompare.setValue 0, true
 
-getFirstLastImages = (image_id, query_string, reload) ->
+getFirstLastImages = (image_id, query_string, reload, setDate) ->
   data =
     api_id: Evercam.User.api_id
     api_key: Evercam.User.api_key
@@ -45,6 +45,10 @@ getFirstLastImages = (image_id, query_string, reload) ->
       snapshot = response.snapshots[0]
     if snapshot.data isnt undefined
       $("##{image_id}").attr("src", snapshot.data)
+      if setDate
+        d = new Date(snapshot.created_at*1000)
+        string_date = "#{d.getUTCMonth()+1}/#{d.getUTCDate()}/#{d.getUTCFullYear()} #{d.getUTCHours()}:#{d.getUTCMinutes()}"
+        $('#calendar-before').datetimepicker({value: string_date})
       initCompare() if reload
     else
       Notification.show("No image found")
@@ -63,9 +67,6 @@ handleTabOpen = ->
   $('.nav-tab-compare').on 'shown.bs.tab', ->
     initCompare()
     updateURL()
-
-datePickerSelect = (dp, $input) ->
-  getFirstLastImages("compare_before", "/#{(new Date($input.val())) / 1000}/nearest")
 
 updateURL = ->
   url = "#{Evercam.request.rootpath}/compare"
@@ -95,11 +96,11 @@ clickOnEmbed = ->
   $(".images-compare-embed-code").on "click", ->
     if !Evercam.Camera.is_public
       Notification.show("Embedding is not working for private cameras.")
-    after = getQueryStringByName("after")
-    before = getQueryStringByName("before")
-    after = "" if after is null
-    before = "" if before is null
-    $("#txtEmbedCode").val("<div id='evercam-compare'></div><script src='#{window.location.origin}/assets/evercam_compare.js' class='#{Evercam.Camera.id} #{before} #{after}'></script>")
+    after = " #{getQueryStringByName("after")}"
+    before = " #{getQueryStringByName("before")}"
+    after = "" if after is " null"
+    before = "" if before is " null"
+    $("#txtEmbedCode").val("<div id='evercam-compare'></div><script src='#{window.location.origin}/assets/evercam_compare.js' class='#{Evercam.Camera.id}#{before}#{after}'></script>")
     $("#txtEmbedCode").select();
     copyToClipboard(document.getElementById("txtEmbedCode"))
 
@@ -128,6 +129,7 @@ copyToClipboard = (elem) ->
   succeed = undefined
   try
     succeed = document.execCommand('copy')
+    Notification.show("Embed code copied.")
   catch e
     succeed = false
   if currentFocus and typeof currentFocus.focus == 'function'
@@ -140,10 +142,11 @@ copyToClipboard = (elem) ->
 
 window.initializeCompareTab = ->
   $("#txtEmbedCode").val("<div id='evercam-compare'></div><script src='#{window.location.origin}/assets/evercam_compare.js' class='#{Evercam.Camera.id}'></script>")
-  getFirstLastImages("compare_before", "/oldest", false)
-  getFirstLastImages("compare_after", "/latest", false)
+  getFirstLastImages("compare_before", "/oldest", false, true)
+  getFirstLastImages("compare_after", "/latest", false, false)
   handleTabOpen()
   clickOnEmbed()
+
   $('#calendar-before').datetimepicker
     format: 'm/d/Y H:m'
     onSelectTime: (dp, $input) ->
@@ -154,7 +157,7 @@ window.initializeCompareTab = ->
         url = "#{url}&after=#{val}"
       if history.replaceState
         window.history.replaceState({}, '', url)
-      getFirstLastImages("compare_before", "/#{(new Date($input.val())) / 1000}/nearest", true)
+      getFirstLastImages("compare_before", "/#{(new Date($input.val())) / 1000}/nearest", true, false)
 
   $('#calendar-after').datetimepicker
     format: 'm/d/Y H:m'
@@ -168,4 +171,4 @@ window.initializeCompareTab = ->
         url = "#{url}?after=#{moment.utc($input.val()).toISOString()}"
       if history.replaceState
         window.history.replaceState({}, '', url)
-      getFirstLastImages("compare_after", "/#{(new Date($input.val())) / 1000}/nearest", true)
+      getFirstLastImages("compare_after", "/#{(new Date($input.val())) / 1000}/nearest", true, false)
